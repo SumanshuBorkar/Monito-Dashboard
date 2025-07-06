@@ -1,3 +1,4 @@
+// src/context/ServicesContext.js (Updated)
 import React, { createContext, useReducer, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
@@ -5,11 +6,11 @@ const initialState = {
     services: [],
     filteredServices: [],
     currentService: null,
-    events: [], // This is in initialState but not used in the reducer. Consider if it's needed.
+    events: [],
     filters: { status: '', search: '' },
     loading: false,
     error: null,
-    deletedService: null, // Initialize deletedService
+    deletedService: null,
 };
 
 function reducer(state, action) {
@@ -25,7 +26,7 @@ function reducer(state, action) {
                 filteredServices: filterServices(action.payload, state.filters)
             };
 
-        case 'FETCH_SERVICES_FAILURE': // Added missing case
+        case 'FETCH_SERVICES_FAILURE':
             return { ...state, loading: false, error: action.payload };
 
         case 'UPDATE_FILTERS':
@@ -67,7 +68,7 @@ function reducer(state, action) {
             return {
                 ...state,
                 services: state.services.map(s =>
-                    s.id === action.payload.tempId ? { ...action.payload.data, id: action.payload.newId, isOptimistic: false } : s // Set isOptimistic to false
+                    s.id === action.payload.tempId ? { ...action.payload.data, id: action.payload.newId, isOptimistic: false } : s
                 ),
                 filteredServices: filterServices(
                     state.services.map(s =>
@@ -77,7 +78,7 @@ function reducer(state, action) {
                 ),
             };
 
-        case 'UNDO_ADD': // Added missing case
+        case 'UNDO_ADD':
             return {
                 ...state,
                 services: state.services.filter(s => s.id !== action.payload),
@@ -105,6 +106,21 @@ function reducer(state, action) {
                 filteredServices: filterServices([...state.services, state.deletedService], state.filters),
                 deletedService: null,
             };
+
+        case 'UPDATE_SERVICE': // New case for updating a service
+            return {
+                ...state,
+                services: state.services.map(s =>
+                    s.id === action.payload.id ? { ...s, ...action.payload.updatedData } : s
+                ),
+                filteredServices: filterServices(
+                    state.services.map(s =>
+                        s.id === action.payload.id ? { ...s, ...action.payload.updatedData } : s
+                    ),
+                    state.filters
+                ),
+            };
+
         default:
             return state;
     }
@@ -115,7 +131,7 @@ function filterServices(services, filters) {
     return services.filter(service => {
         const matchesStatus = filters.status ? service.status === filters.status : true;
         const matchesSearch = filters.search
-            ? (service.name && service.name.toLowerCase().includes(filters.search.toLowerCase())) // Added check for service.name
+            ? (service.name && service.name.toLowerCase().includes(filters.search.toLowerCase()))
             : true;
         return matchesStatus && matchesSearch;
     });
@@ -126,10 +142,8 @@ export const ServicesContext = createContext();
 export const ServicesProvider = ({ children }) => {
     const [state, dispatch] = useReducer(reducer, initialState);
 
-    // Placeholder for showNotification. You should replace this with your actual notification logic.
     const showNotification = useCallback((message) => {
         console.log('Notification:', message);
-        // Example: You might dispatch a global notification action here or use a toast library
     }, []);
 
     const fetchServices = useCallback(async () => {
@@ -146,7 +160,7 @@ export const ServicesProvider = ({ children }) => {
         const tempId = `temp-${Date.now()}`;
         dispatch({
             type: 'ADD_SERVICE_OPTIMISTIC',
-            payload: { ...serviceData, id: tempId, status: 'Online' } // Assuming 'Online' as default status
+            payload: { ...serviceData, id: tempId, status: 'Online' }
         });
 
         try {
@@ -155,30 +169,46 @@ export const ServicesProvider = ({ children }) => {
                 type: 'CONFIRM_SERVICE',
                 payload: { tempId, newId: data.id, data }
             });
+            showNotification('Service added successfully!'); // Added success notification
         } catch (error) {
             dispatch({ type: 'UNDO_ADD', payload: tempId });
             showNotification('Failed to add service: ' + error.message);
         }
-    }, [showNotification]); // Dependency added
+    }, [showNotification]);
 
     const deleteService = useCallback(async (id) => {
         dispatch({ type: 'DELETE_SERVICE_OPTIMISTIC', payload: id });
 
         try {
             await axios.delete(`/api/services/${id}`);
+            showNotification('Service deleted successfully!'); // Added success notification
         } catch (error) {
             dispatch({ type: 'UNDO_DELETE' });
             showNotification('Failed to delete service: ' + error.message);
         }
-    }, [showNotification]); // Dependency added
+    }, [showNotification]);
 
-    // Initial fetch
+    const editService = useCallback(async (id, updatedData) => {
+        try {
+            // Optional: Optimistic update for edit
+            // dispatch({ type: 'UPDATE_SERVICE_OPTIMISTIC', payload: { id, updatedData } });
+            await axios.put(`/api/services/${id}`, updatedData);
+            dispatch({ type: 'UPDATE_SERVICE', payload: { id, updatedData } }); // Confirm update
+            showNotification('Service updated successfully!'); // Added success notification
+        } catch (error) {
+            // Optional: Rollback if optimistic update was applied
+            // dispatch({ type: 'UNDO_UPDATE_SERVICE', payload: { id, originalData } });
+            showNotification('Failed to update service: ' + error.message);
+        }
+    }, [showNotification]);
+
+
     useEffect(() => {
         fetchServices();
     }, [fetchServices]);
 
     return (
-        <ServicesContext.Provider value={{ state, dispatch, fetchServices, addService, deleteService }}>
+        <ServicesContext.Provider value={{ state, dispatch, fetchServices, addService, deleteService, editService }}>
             {children}
         </ServicesContext.Provider>
     );

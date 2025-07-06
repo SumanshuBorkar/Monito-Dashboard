@@ -1,8 +1,8 @@
 import React from 'react';
 import ServiceRow from './ServiceRow';
-import StatusBadge from './StatusBadge';
+import { SkeletonTableRow } from '../ui/Skeleton';
 
-export default function ServiceTable({ services }) {
+export default function ServiceTable({ services, loading }) {
   return (
     <div className="overflow-x-auto rounded-lg shadow">
       <table className="min-w-full divide-y divide-gray-200">
@@ -23,11 +23,25 @@ export default function ServiceTable({ services }) {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {services.map(service => (
-            <ServiceRow key={service.id} service={service} />
-          ))}
-        </tbody>
+        {loading ? (
+          <>
+            <SkeletonTableRow />
+            <SkeletonTableRow />
+            <SkeletonTableRow />
+          </>
+        ) : services.length > 0 ? (
+          services.map(service => <ServiceRow key={service.id} service={service} />)
+        ) : (
+          <tr>
+            <td colSpan="4" className="px-6 py-4 text-center text-gray-500">
+              No services found
+            </td>
+          </tr>
+        )}
+      </tbody>
       </table>
     </div>
   );
 }
+
+  
