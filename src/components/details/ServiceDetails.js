@@ -4,6 +4,8 @@ import { ServicesContext } from '../../context/ServicesContext';
 import StatusBadge from '../dashboard/StatusBadge';
 import EventList from './EventList';
 import axios from 'axios';
+import StatusTimeline from './StatusTimeline';
+
 
 export default function ServiceDetails() {
   const { id } = useParams();
@@ -71,14 +73,18 @@ export default function ServiceDetails() {
           <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <h3 className="text-sm font-medium text-gray-500">Created At</h3>
-              <p className="mt-1 text-gray-900">October 15, 2023</p>
+              <p className="mt-1 text-gray-900">{service.createdAt}</p>
             </div>
             <div>
               <h3 className="text-sm font-medium text-gray-500">Last Updated</h3>
-              <p className="mt-1 text-gray-900">Just now</p>
+              <p className="mt-1 text-gray-900">{service.updatedAt}</p>
             </div>
           </div>
         </div>
+
+        <div className="mt-6">
+        <StatusTimeline events={service.events || []} />
+      </div>
         
         <div className="p-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Historical Events</h2>
