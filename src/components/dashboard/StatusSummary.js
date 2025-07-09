@@ -1,13 +1,11 @@
 import React from 'react';
 
 export default function StatusSummary({ services }) {
-  // Calculate service counts by status
   const statusCounts = services.reduce((acc, service) => {
     acc[service.status] = (acc[service.status] || 0) + 1;
     return acc;
   }, {});
 
-  // Status card data
   const statusData = [
     {
       title: 'Online',

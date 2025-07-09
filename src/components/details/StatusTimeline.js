@@ -1,4 +1,3 @@
-// src/components/details/StatusTimeline.js
 import React from 'react';
 import { Line } from 'react-chartjs-2';
 import {
@@ -23,7 +22,6 @@ ChartJS.register(
 );
 
 export default function StatusTimeline({ events }) {
-  // Process events into timeline data
   const processData = () => {
     const statusMap = {
       Online: 2,
@@ -34,12 +32,10 @@ export default function StatusTimeline({ events }) {
     const timeline = [];
     const dataPoints = [];
     
-    // Sort events chronologically
     const sortedEvents = [...events].sort((a, b) => 
       new Date(a.timestamp) - new Date(b.timestamp)
     );
     
-    // Create timeline points
     sortedEvents.forEach(event => {
       const status = event.message.includes('online') ? 'Online' : 
                     event.message.includes('degraded') ? 'Degraded' : 'Offline';

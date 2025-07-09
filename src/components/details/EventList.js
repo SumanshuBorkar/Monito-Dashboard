@@ -25,7 +25,6 @@ export default function EventList({ serviceId, loadMore, hasMore, isLoading }) {
 
   return (
     <div className="space-y-3">
-      {/* Loading state for initial load */}
       {isLoading && events.length === 0 ? (
         <>
           <SkeletonEventItem />
@@ -45,7 +44,6 @@ export default function EventList({ serviceId, loadMore, hasMore, isLoading }) {
         </InfiniteLoader>
       )}
 
-      {/* Empty state */}
       {!isLoading && events.length === 0 && (
         <div className="text-center py-8">
           <p className="text-gray-500 dark:text-gray-400">No events recorded for this service</p>

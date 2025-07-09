@@ -21,7 +21,6 @@ export default function usePolling(callback, interval = 15000) {
     return () => clearInterval(id);
   }, [interval]);
 
-  // Visibility handling
   useEffect(() => {
     const handleVisibilityChange = () => {
       visibilityState.current = !document.hidden;

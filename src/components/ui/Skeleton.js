@@ -1,4 +1,3 @@
-// src/components/ui/Skeleton.js
 import React from 'react';
 
 export const SkeletonTableRow = () => (

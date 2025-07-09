@@ -1,7 +1,6 @@
 import { setupWorker } from "msw/browser"
 import { http, HttpResponse } from "msw"
 
-// Mock data store
 let services = [
   {
     id: 1,
@@ -10,11 +9,11 @@ let services = [
     status: "Online",
     description: "Handles user login and registration",
     url: "https://api.example.com/auth",
-    createdAt: "2023-07-01T08:00:00Z",
+    createdAt: "2025-07-01T08:00:00Z",
     updatedAt: new Date().toISOString(),
     events: [
-      { id: 1, type: "up", timestamp: "2023-07-01T08:00:00Z", message: "Service deployed" },
-      { id: 2, type: "degraded", timestamp: "2023-07-02T09:15:00Z", message: "Performance issues detected" },
+      { id: 1, type: "up", timestamp: "2025-07-01T08:00:00Z", message: "Service deployed" },
+      { id: 2, type: "degraded", timestamp: "2025-07-02T09:15:00Z", message: "Performance issues detected" },
     ],
   },
   {
@@ -24,12 +23,12 @@ let services = [
     status: "Degraded",
     description: "Processes payments and transactions",
     url: "https://api.example.com/payments",
-    createdAt: "2023-06-25T11:00:00Z",
+    createdAt: "2025-06-25T11:00:00Z",
     updatedAt: new Date().toISOString(),
     events: [
-      { id: 3, type: "up", timestamp: "2023-06-25T11:00:00Z", message: "Service deployed" },
-      { id: 4, type: "down", timestamp: "2023-06-28T10:00:00Z", message: "Service outage detected" },
-      { id: 5, type: "degraded", timestamp: "2023-06-29T14:30:00Z", message: "Partial service restoration" },
+      { id: 3, type: "up", timestamp: "2025-06-25T11:00:00Z", message: "Service deployed" },
+      { id: 4, type: "down", timestamp: "2025-06-28T10:00:00Z", message: "Service outage detected" },
+      { id: 5, type: "degraded", timestamp: "2025-06-29T14:30:00Z", message: "Partial service restoration" },
     ],
   },
   {
@@ -39,24 +38,22 @@ let services = [
     status: "Online",
     description: "Primary database cluster",
     url: "db.example.com:5432",
-    createdAt: "2023-06-20T09:00:00Z",
+    createdAt: "2025-06-20T09:00:00Z",
     updatedAt: new Date().toISOString(),
-    events: [{ id: 6, type: "up", timestamp: "2023-06-20T09:00:00Z", message: "Database cluster initialized" }],
+    events: [{ id: 6, type: "up", timestamp: "2025-06-20T09:00:00Z", message: "Database cluster initialized" }],
   },
 ]
 
-// Simulate status changes every 15 seconds
 setInterval(() => {
   services = services.map((service) => {
     if (Math.random() < 0.15) {
-      // 15% chance to change status
       const statuses = ["Online", "Degraded", "Offline"]
       const currentIndex = statuses.indexOf(service.status)
       const availableStatuses = statuses.filter((_, index) => index !== currentIndex)
       const newStatus = availableStatuses[Math.floor(Math.random() * availableStatuses.length)]
 
       const event = {
-        id: Date.now() + Math.random(), // Ensure unique ID
+        id: Date.now() + Math.random(),
         type: newStatus.toLowerCase() === "online" ? "up" : newStatus.toLowerCase() === "offline" ? "down" : "degraded",
         timestamp: new Date().toISOString(),
         message: `Status changed to ${newStatus}`,
@@ -73,10 +70,9 @@ setInterval(() => {
   })
 }, 15000)
 
-// Network simulation helper
 const simulateNetwork = (responseData, options = {}) => {
-  const shouldError = Math.random() < (options.errorRate || 0.05) // 5% error rate by default
-  const delay = Math.random() * 700 + 300 // 300-1000ms delay
+  const shouldError = Math.random() < (options.errorRate || 0.05) 
+  const delay = Math.random() * 700 + 300 
 
   if (shouldError) {
     return HttpResponse.json({ message: "Simulated server error" }, { status: 500, delay })
@@ -87,7 +83,6 @@ const simulateNetwork = (responseData, options = {}) => {
 
 // API handlers
 export const handlers = [
-  // GET all services with query parameter support
   http.get("/api/services", ({ request }) => {
     console.log("MSW: Intercepting GET /api/services")
 
@@ -100,7 +95,6 @@ export const handlers = [
 
     let result = [...services]
 
-    // Apply filters
     if (status) {
       result = result.filter((s) => s.status === status)
     }
@@ -108,7 +102,6 @@ export const handlers = [
       result = result.filter((s) => s.name.toLowerCase().includes(search.toLowerCase()))
     }
 
-    // Handle field selection (for polling)
     if (fields) {
       const fieldList = fields.split(",")
       result = result.map((service) => {
@@ -122,7 +115,6 @@ export const handlers = [
       })
     }
 
-    // Pagination
     const start = (page - 1) * limit
     const paginated = result.slice(start, start + limit)
 
@@ -134,7 +126,6 @@ export const handlers = [
     })
   }),
 
-  // GET service statuses only (for efficient polling)
   http.get("/api/services/status", () => {
     console.log("MSW: Intercepting GET /api/services/status")
 
@@ -146,7 +137,6 @@ export const handlers = [
     return simulateNetwork(statuses)
   }),
 
-  // GET single service
   http.get("/api/services/:id", ({ params }) => {
     console.log(`MSW: Intercepting GET /api/services/${params.id}`)
 
@@ -157,7 +147,6 @@ export const handlers = [
     return simulateNetwork(service)
   }),
 
-  // POST create service
   http.post("/api/services", async ({ request }) => {
     console.log("MSW: Intercepting POST /api/services")
 
@@ -186,7 +175,6 @@ export const handlers = [
     }
   }),
 
-  // PUT update service
   http.put("/api/services/:id", async ({ params, request }) => {
     console.log(`MSW: Intercepting PUT /api/services/${params.id}`)
 
@@ -200,12 +188,11 @@ export const handlers = [
       const updatedService = {
         ...service,
         ...updates,
-        id: service.id, // Ensure ID doesn't change
+        id: service.id, 
         updatedAt: new Date().toISOString(),
-        events: service.events, // Preserve existing events
+        events: service.events,
       }
 
-      // Add update event if significant changes were made
       const significantFields = ["name", "type", "url", "description"]
       const hasSignificantChanges = significantFields.some(
         (field) => updates[field] && updates[field] !== service[field],
@@ -230,7 +217,7 @@ export const handlers = [
     }
   }),
 
-  // DELETE service
+  
   http.delete("/api/services/:id", ({ params }) => {
     console.log(`MSW: Intercepting DELETE /api/services/${params.id}`)
 
@@ -245,7 +232,6 @@ export const handlers = [
     return simulateNetwork({ message: "Service deleted successfully" })
   }),
 
-  // GET service events with pagination
   http.get("/api/services/:id/events", ({ params, request }) => {
     console.log(`MSW: Intercepting GET /api/services/${params.id}/events`)
 
@@ -268,13 +254,11 @@ export const handlers = [
   }),
 ]
 
-// Start the service worker in development
 let worker
 
 if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
   worker = setupWorker(...handlers)
 
-  // Start the worker
   worker
     .start({
       onUnhandledRequest: "bypass",

@@ -11,7 +11,7 @@ export default function OptimisticButton ({
   disabled = false,
   ...props
 }){
-  const [status, setStatus] = useState('idle'); // idle, pending, success, error
+  const [status, setStatus] = useState('idle'); 
   const [message, setMessage] = useState('');
 
   const handleClick = async () => {
@@ -29,7 +29,6 @@ export default function OptimisticButton ({
       setMessage(errorMessage);
       if (onError) onError(error);
       
-      // Reset status after delay
       setTimeout(() => setStatus('idle'), 3000);
     }
   };

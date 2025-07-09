@@ -1,9 +1,4 @@
-/**
- * Debounce function to limit how often a function is called
- * @param {Function} func - Function to debounce
- * @param {number} wait - Wait time in milliseconds
- * @param {boolean} immediate - Whether to call immediately
- */
+
 export const debounce = (func, wait = 300, immediate = false) => {
     let timeout;
     return function(...args) {
@@ -19,9 +14,7 @@ export const debounce = (func, wait = 300, immediate = false) => {
     };
   };
   
-  /**
-   * Format status with consistent casing and fallback
-   */
+  
   export const formatStatus = (status) => {
     const statusMap = {
       online: 'Online',
@@ -31,9 +24,7 @@ export const debounce = (func, wait = 300, immediate = false) => {
     return statusMap[status?.toLowerCase()] || status || 'Unknown';
   };
   
-  /**
-   * Get Tailwind classes for status indicators
-   */
+ 
   export const getStatusClasses = (status, type = 'bg') => {
     const classMap = {
       online: {
@@ -60,9 +51,7 @@ export const debounce = (func, wait = 300, immediate = false) => {
         : 'text-gray-800 dark:text-gray-400');
   };
   
-  /**
-   * Format date/time with timezone support
-   */
+
   export const formatDateTime = (dateString, options = {}) => {
     const defaultOptions = {
       year: 'numeric',
@@ -79,9 +68,7 @@ export const debounce = (func, wait = 300, immediate = false) => {
     );
   };
   
-  /**
-   * Simulate API delay for development
-   */
+
   export const simulateDelay = (min = 300, max = 1000) => {
     if (process.env.NODE_ENV === 'development') {
       const delay = Math.random() * (max - min) + min;
@@ -89,14 +76,10 @@ export const debounce = (func, wait = 300, immediate = false) => {
     }
     return Promise.resolve();
   };
-  
-  /**
-   * Handle API errors consistently
-   */
+
   export const handleApiError = (error) => {
     console.error('API Error:', error);
     
-    // Axios error structure
     if (error.response) {
       return {
         message: error.response.data?.message || 'Server responded with an error',
@@ -105,18 +88,14 @@ export const debounce = (func, wait = 300, immediate = false) => {
       };
     }
     
-    // Network errors
     if (error.request) {
       return { message: 'Network error - please check your connection' };
     }
     
-    // Other errors
     return { message: error.message || 'An unknown error occurred' };
   };
   
-  /**
-   * Optimistic update helper for arrays
-   */
+
   export const optimisticArrayUpdate = (array, item, action = 'update') => {
     switch (action) {
       case 'add':

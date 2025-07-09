@@ -132,7 +132,6 @@ export const ServicesProvider = ({ children }) => {
     fetchServices()
   }, [fetchServices])
 
-  // Refresh services every 10 seconds
   useEffect(() => {
     const interval = setInterval(fetchServices, 10000)
     return () => clearInterval(interval)

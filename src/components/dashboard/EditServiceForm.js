@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect, useContext } from "react"
 import { createPortal } from "react-dom"
 import { ServicesContext } from "../../context/ServicesContext"
@@ -10,6 +8,7 @@ export default function EditServiceForm({ isOpen, close, service, showNotificati
     type: "API",
     description: "",
     url: "",
+    status: "active",
   })
 
   const { editService } = useContext(ServicesContext)
@@ -22,6 +21,7 @@ export default function EditServiceForm({ isOpen, close, service, showNotificati
         type: service.type || "API",
         description: service.description || "",
         url: service.url || "",
+        status: service.status || "active", 
       })
     }
   }, [service])
@@ -119,6 +119,24 @@ export default function EditServiceForm({ isOpen, close, service, showNotificati
               placeholder="https://example.com/api"
               disabled={isSubmitting}
             />
+          </div>
+
+          <div>
+            <label htmlFor="edit-status" className="block text-sm font-medium text-gray-700">
+              Status *
+            </label>
+            <select
+              id="edit-status"
+              value={formData.status}
+              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+              className="mt-1 block w-full bg-white border border-gray-300 rounded-md shadow-sm p-2"
+              required
+              disabled={isSubmitting}
+            >
+              <option value="Online">Online</option>
+              <option value="Degraded">Degraded</option>
+              <option value="Offline">Offline</option>
+            </select>
           </div>
 
           <div className="flex justify-end space-x-3 pt-4">

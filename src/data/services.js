@@ -1,4 +1,3 @@
-// Simple in-memory data store
 let services = [
   {
     id: 1,
@@ -7,11 +6,11 @@ let services = [
     status: "Online",
     description: "Handles user login and registration",
     url: "https://api.example.com/auth",
-    createdAt: "2023-07-01T08:00:00Z",
+    createdAt: "2025-07-01T08:00:00Z",
     updatedAt: new Date().toISOString(),
     events: [
-      { id: 1, type: "up", timestamp: "2023-07-01T08:00:00Z", message: "Service deployed" },
-      { id: 2, type: "degraded", timestamp: "2023-07-02T09:15:00Z", message: "Performance issues detected" },
+      { id: 1, type: "up", timestamp: "2025-07-01T08:00:00Z", message: "Service deployed" },
+      { id: 2, type: "degraded", timestamp: "2025-07-02T09:15:00Z", message: "Performance issues detected" },
     ],
   },
   {
@@ -21,12 +20,12 @@ let services = [
     status: "Degraded",
     description: "Processes payments and transactions",
     url: "https://api.example.com/payments",
-    createdAt: "2023-06-25T11:00:00Z",
+    createdAt: "2025-06-25T11:00:00Z",
     updatedAt: new Date().toISOString(),
     events: [
-      { id: 3, type: "up", timestamp: "2023-06-25T11:00:00Z", message: "Service deployed" },
-      { id: 4, type: "down", timestamp: "2023-06-28T10:00:00Z", message: "Service outage detected" },
-      { id: 5, type: "degraded", timestamp: "2023-06-29T14:30:00Z", message: "Partial service restoration" },
+      { id: 3, type: "up", timestamp: "2025-06-25T11:00:00Z", message: "Service deployed" },
+      { id: 4, type: "down", timestamp: "2025-06-28T10:00:00Z", message: "Service outage detected" },
+      { id: 5, type: "degraded", timestamp: "2025-06-29T14:30:00Z", message: "Partial service restoration" },
     ],
   },
   {
@@ -36,13 +35,12 @@ let services = [
     status: "Online",
     description: "Primary database cluster",
     url: "db.example.com:5432",
-    createdAt: "2023-06-20T09:00:00Z",
+    createdAt: "2025-06-20T09:00:00Z",
     updatedAt: new Date().toISOString(),
-    events: [{ id: 6, type: "up", timestamp: "2023-06-20T09:00:00Z", message: "Database cluster initialized" }],
+    events: [{ id: 6, type: "up", timestamp: "2025-06-20T09:00:00Z", message: "Database cluster initialized" }],
   },
 ]
 
-// Simple API functions
 export const getAllServices = () => {
   return Promise.resolve([...services])
 }
@@ -97,7 +95,6 @@ export const deleteService = (id) => {
   return Promise.resolve()
 }
 
-// Simulate status changes
 setInterval(() => {
   services = services.map((service) => {
     if (Math.random() < 0.1) {
